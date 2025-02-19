@@ -59,7 +59,7 @@ public class AuthController {
                             .build();
                     return userRepository.save(newUser);
                 });
-        String accesstoken = jwtUtil.generateToken(user.getEmail());
+        String accesstoken = jwtUtil.generateToken(user.getEmail(), user.getId());
         String refreshToken = userService.refreshToken();
         RToken rToken = RToken.builder()
                 .token(refreshToken)
@@ -123,7 +123,7 @@ public class AuthController {
             rTokenRepository.delete(rToken1);  // Delete expired token from database  (optional)
             return ResponseEntity.status(401).body(Map.of("error", "Refresh token expired"));
         }
-        String accesstoken = jwtUtil.generateToken(rToken1.getUserId().getEmail());
+        String accesstoken = jwtUtil.generateToken(rToken1.getUserId().getEmail(), rToken1.getUserId().getId());
         String newRefreshToken = userService.refreshToken();
         LocalDateTime newRefreshTokenExpirationTime = LocalDateTime.now().plusDays(2);
         RToken newRToken = rToken.get();
