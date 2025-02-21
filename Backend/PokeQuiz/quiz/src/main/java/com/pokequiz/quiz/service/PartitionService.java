@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 public class PartitionService {
 
     private final JdbcTemplate jdbcTemplate;
-    private static final int PARTITION_COUNT = 10; // 🔥 Adjust as needed
+    private static final int PARTITION_COUNT = 2; // 🔥 Adjust as needed
     private static final Logger log = LoggerFactory.getLogger(PartitionService.class);
 
 
@@ -45,12 +45,12 @@ public class PartitionService {
             jdbcTemplate.execute(createMainTableSQL);
             log.info("✅ Main partitioned table created!");
 
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < PARTITION_COUNT; i++) {
                 String partitionSQL = String.format("""
                 CREATE TABLE quiz_attempts_partition_%d 
                 PARTITION OF quiz_attempts 
-                FOR VALUES WITH (MODULUS 10, REMAINDER %d);
-            """, i, i);
+                FOR VALUES WITH (MODULUS %d, REMAINDER %d);
+            """, i,PARTITION_COUNT, i);
 
                 jdbcTemplate.execute(partitionSQL);
                 log.info("✅ Partition {} created!", i);

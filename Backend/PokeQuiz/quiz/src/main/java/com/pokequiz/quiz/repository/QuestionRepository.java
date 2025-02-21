@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Long> {
@@ -30,4 +31,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findByDifficulty(String difficulty);
 
     List<Question> findByRegion(String region);
+
+    Optional<Question> findByQuestion(String question);
 }

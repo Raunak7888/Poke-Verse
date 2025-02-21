@@ -25,6 +25,9 @@ public class QuizController {
         if (questionDTO == null) {
             return ResponseEntity.badRequest().body("Question body cannot be null");
         }
+        if(questionDTO.getCorrectAnswer() == null) {
+            return ResponseEntity.badRequest().body("Correct answer cannot be null");
+        }
         if (questionDTO.getOptions() == null || questionDTO.getOptions().size() != 4) {
             return ResponseEntity.badRequest().body("Options should be exactly 4.");
         }

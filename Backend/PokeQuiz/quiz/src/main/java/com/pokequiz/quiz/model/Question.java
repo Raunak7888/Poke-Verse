@@ -1,5 +1,6 @@
 package com.pokequiz.quiz.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import jakarta.persistence.*;
@@ -8,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +24,7 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String question;
     private String difficulty;
     private String region;
@@ -34,7 +35,9 @@ public class Question {
     @Column(columnDefinition = "TEXT")
     private String options;  // Store as JSON text
 
-    private String correctAnswer;
+    @JsonIgnore
+    @OneToOne(mappedBy = "question", cascade = CascadeType.ALL)
+    private Answer answer;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
