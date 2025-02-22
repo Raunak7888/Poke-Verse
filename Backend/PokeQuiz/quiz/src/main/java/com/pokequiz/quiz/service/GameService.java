@@ -27,17 +27,19 @@ public class GameService {
         return questionRepository.findByRegion(region);
     }
 
-    public List<Question> getQuizzesByRegionAndDifficulty(String region, String difficulty) {
-        return questionRepository.findByDifficultyAndRegion(region, difficulty);
+    public List<Question> getQuizzesByRegionAndDifficulty(String region, String difficulty, String quizType) {
+        return questionRepository.findByDifficultyAndRegion(region, difficulty,quizType);
     }
 
     public List<Question> getRandomQuizzes(int limit) {
         return questionRepository.findRandomQuestions(limit);
     }
 
-    public List<Question> getRandomQuizzesAsPerDifficultyAndRegion(String region, String difficulty, int limit) {
-        return questionRepository.findRandomQuestionsAsPerDifficultyAndRegion(region, difficulty, limit);
+    public List<Question> getRandomQuizzesAsPerDifficultyAndRegion(String region, String difficulty, String quizType, int limit) {
+        return questionRepository.findRandomQuestionsAsPerDifficultyAndRegion(region, difficulty, quizType, limit);
     }
 
-
+    public List<Question> getQuizzesByQuizType(String quizType) {
+        return questionRepository.findByQuizType(quizType);
+    }
 }

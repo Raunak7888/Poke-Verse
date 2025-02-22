@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/attempts")
+@CrossOrigin(origins = "http://127.0.0.1:5500")
 public class QuizAttemptController {
 
     private final QuizAttemptService quizAttemptService;
@@ -43,6 +43,12 @@ public class QuizAttemptController {
                                                                   @RequestParam LocalDateTime startTime,
                                                                   @RequestParam LocalDateTime endTime) {
         List<QuizAttempt> attempts = quizAttemptService.getUserAttemptByTime(userId, startTime, endTime);
+        return ResponseEntity.ok(attempts);
+    }
+
+    @GetMapping("/question")
+    public ResponseEntity<List<QuizAttempt>> getAttemptsByQuestionId(@RequestParam Long questionId) {
+        List<QuizAttempt> attempts = quizAttemptService.getAttemptsByQuestionId(questionId);
         return ResponseEntity.ok(attempts);
     }
 

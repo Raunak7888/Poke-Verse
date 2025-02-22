@@ -86,4 +86,7 @@ public class QuizAttemptService {
         return quizAttemptRepository.findByUserIdAndStartTimeBetween(userId, startTime, endTime);
     }
 
+    public List<QuizAttempt> getAttemptsByQuestionId(Long questionId) {
+        return quizAttemptRepository.findByQuestionId(questionId);
+    }
 }

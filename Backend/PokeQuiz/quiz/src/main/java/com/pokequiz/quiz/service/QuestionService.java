@@ -58,16 +58,16 @@ public class QuestionService {
         return convertToDTO(questionRepository.findByRegion(region));
     }
 
-    public List<QuestionDTO> getQuizzesByRegionAndDifficulty(String region,String difficulty) {
-        return convertToDTO(questionRepository.findByDifficultyAndRegion(region, difficulty));
+    public List<QuestionDTO> getQuizzesByRegionAndDifficulty(String region,String difficulty, String quizType) {
+        return convertToDTO(questionRepository.findByDifficultyAndRegion(region, difficulty, quizType));
     }
 
     public List<QuestionDTO> getRandomQuizzes(int limit) {
         return convertToDTO(questionRepository.findRandomQuestions(limit));
     }
 
-    public List<QuestionDTO> getRandomQuizzesAsPerDifficultyAndRegion(String region, String difficulty, int limit) {
-        return convertToDTO(questionRepository.findRandomQuestionsAsPerDifficultyAndRegion(region, difficulty, limit));
+    public List<QuestionDTO> getRandomQuizzesAsPerDifficultyAndRegion(String region, String difficulty, String quizType, int limit) {
+        return convertToDTO(questionRepository.findRandomQuestionsAsPerDifficultyAndRegion(region, difficulty, quizType, limit));
     }
 
     private List<QuestionDTO> convertToDTO(List<Question> questions) {
@@ -89,4 +89,7 @@ public class QuestionService {
         return questionDTOs;
     }
 
+    public List<QuestionDTO> getQuizzesByQuizType(String quizType) {
+        return convertToDTO(questionRepository.findByQuizType(quizType));
+    }
 }

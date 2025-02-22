@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/quiz/game")
+@CrossOrigin(origins = "http://127.0.0.1:5500")
 public class GameController {
 
     private final GameService gameService;
@@ -15,8 +16,8 @@ public class GameController {
     }
 
     @GetMapping("/hello")
-    public String hello() {
-        return "Hello World";
+    public ResponseEntity<?> hello() {
+        return ResponseEntity.ok("{\"response\": \"Hello World\"}"); // Correct JSON formatting
     }
 
     @GetMapping("/all")
@@ -34,11 +35,17 @@ public class GameController {
         return ResponseEntity.ok(gameService.getQuizzesByRegion(region));
     }
 
-    @GetMapping("/region/difficulty/all")
+    @GetMapping("/quiztype/all")
+    public ResponseEntity<?> getQuizzesByQuizType(@RequestParam String quizType) {
+        return ResponseEntity.ok(gameService.getQuizzesByQuizType(quizType));
+    }
+
+    @GetMapping("/region/difficulty/quiztype/all")
     public ResponseEntity<?> getQuizzesByRegionAndDifficulty(
-            @RequestParam String region,
-            @RequestParam String difficulty) {
-        return ResponseEntity.ok(gameService.getQuizzesByRegionAndDifficulty(region, difficulty));
+            @RequestParam(required = false) String region,
+            @RequestParam(required = false) String difficulty,
+            @RequestParam(required = false) String quizType) {
+        return ResponseEntity.ok(gameService.getQuizzesByRegionAndDifficulty(region, difficulty, quizType));
     }
 
     @GetMapping("/random")
@@ -46,11 +53,12 @@ public class GameController {
         return ResponseEntity.ok(gameService.getRandomQuizzes(limit));
     }
 
-    @GetMapping("/random/difficulty/region")
+    @GetMapping("/random/difficulty/region/quiztype")
     public ResponseEntity<?> getRandomQuizzesAsPerDifficultyAndRegion(
-            @RequestParam String region,
-            @RequestParam String difficulty,
+            @RequestParam(required = false) String region,
+            @RequestParam(required = false) String difficulty,
+            @RequestParam(required = false) String quizType,
             @RequestParam int limit) {
-        return ResponseEntity.ok(gameService.getRandomQuizzesAsPerDifficultyAndRegion(region, difficulty, limit));
+        return ResponseEntity.ok(gameService.getRandomQuizzesAsPerDifficultyAndRegion(region, difficulty, quizType, limit));
     }
 }

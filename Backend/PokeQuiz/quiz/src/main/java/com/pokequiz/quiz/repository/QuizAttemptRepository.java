@@ -16,4 +16,6 @@ public interface QuizAttemptRepository extends JpaRepository<QuizAttempt, Long> 
     QuizAttempt findByUserIdAndStartTime(Long userId, LocalDateTime startTime);
 
     List<QuizAttempt> findByUserIdAndStartTimeBetween(Long userId, LocalDateTime startTime, LocalDateTime endTime);
+
+    List<QuizAttempt> findByQuestionId(Long questionId);
 }
