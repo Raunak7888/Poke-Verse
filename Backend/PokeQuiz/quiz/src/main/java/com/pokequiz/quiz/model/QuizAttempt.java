@@ -21,11 +21,14 @@ public class QuizAttempt {
     private Long id;
 
     private Long userId;
-    private Long quizId;
     private Long questionId;
     private String selectedAnswer;
     private boolean isCorrect;
 
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
+
 }
