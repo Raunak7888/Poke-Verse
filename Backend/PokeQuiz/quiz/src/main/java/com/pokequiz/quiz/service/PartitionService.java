@@ -26,7 +26,7 @@ public class PartitionService {
 
             Integer tableExists = jdbcTemplate.queryForObject(
                     """
-                    SELECT COUNT(*) 
+                    SELECT COUNT(*)
                     FROM pg_partitioned_table pt
                     JOIN pg_class pc ON pt.partrelid = pc.oid
                     WHERE pc.relname = 'quiz_attempts'
@@ -41,19 +41,20 @@ public class PartitionService {
 
             log.info("🔥 Creating main partitioned table...");
             String createMainTableSQL = """
-            DROP TABLE IF EXISTS quiz_attempts Cascade;
+            DROP TABLE IF EXISTS quiz_attempts CASCADE;
             CREATE TABLE quiz_attempts (
-                id BIGINT GENERATED ALWAYS AS IDENTITY,  -- ✅ Fixed auto-increment
-                user_id BIGINT NOT NULL,
+                id BIGINT GENERATED ALWAYS AS IDENTITY,  -- ✅ Auto-increment primary key
+                session_id BIGINT NOT NULL,
                 question_id BIGINT NOT NULL,
                 selected_answer VARCHAR(255) NOT NULL,
                 is_correct BOOLEAN NOT NULL,
-                start_time TIMESTAMP NOT NULL,
-                end_time TIMESTAMP NOT NULL,
+                start_time TIMESTAMP,
+                end_time TIMESTAMP,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                PRIMARY KEY (user_id, id) -- ✅ Fixed: id must be after user_id
-            ) PARTITION BY HASH (user_id);
-        """;
+                PRIMARY KEY (session_id, id),
+                CONSTRAINT fk_quiz_session FOREIGN KEY (session_id) REFERENCES quiz_session (session_id)
+            ) PARTITION BY HASH (session_id);
+            """;
 
             jdbcTemplate.execute(createMainTableSQL);
             log.info("✅ Main partitioned table created!");
@@ -63,7 +64,7 @@ public class PartitionService {
                 CREATE TABLE IF NOT EXISTS quiz_attempts_partition_%d 
                 PARTITION OF quiz_attempts 
                 FOR VALUES WITH (MODULUS %d, REMAINDER %d);
-            """, i, PARTITION_COUNT, i);
+                """, i, PARTITION_COUNT, i);
 
                 jdbcTemplate.execute(partitionSQL);
                 log.info("✅ Partition {} created!", i);
@@ -73,7 +74,4 @@ public class PartitionService {
             log.error("❌ Error during partition creation: {}", e.getMessage(), e);
         }
     }
-
-
-
 }

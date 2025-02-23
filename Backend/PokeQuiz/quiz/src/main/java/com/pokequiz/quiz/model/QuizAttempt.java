@@ -16,11 +16,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QuizAttempt {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "session_id", nullable = false)
+    private QuizSession sessionId;
+
     private Long questionId;
     private String selectedAnswer;
     private boolean isCorrect;
@@ -30,5 +34,4 @@ public class QuizAttempt {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
-
 }

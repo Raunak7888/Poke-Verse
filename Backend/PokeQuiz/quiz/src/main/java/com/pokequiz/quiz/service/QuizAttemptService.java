@@ -4,9 +4,11 @@ import com.pokequiz.quiz.dto.QuizAttemptDTO;
 import com.pokequiz.quiz.model.Answer;
 import com.pokequiz.quiz.model.Question;
 import com.pokequiz.quiz.model.QuizAttempt;
+import com.pokequiz.quiz.model.QuizSession;
 import com.pokequiz.quiz.repository.AnswerRepository;
 import com.pokequiz.quiz.repository.QuestionRepository;
 import com.pokequiz.quiz.repository.QuizAttemptRepository;
+import com.pokequiz.quiz.repository.QuizSessionRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
@@ -22,45 +24,42 @@ import java.util.Optional;
 public class QuizAttemptService {
 
     private final QuizAttemptRepository quizAttemptRepository;
+    private final QuizSessionRepository quizSessionRepository;
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    private static final int PARTITION_COUNT = 2;  // Adjust as needed
-
-    public QuizAttemptService(QuizAttemptRepository quizAttemptRepository, QuestionRepository questionRepository, AnswerRepository answerRepository) {
+    public QuizAttemptService(QuizAttemptRepository quizAttemptRepository, QuizSessionRepository quizSessionRepository,
+                              QuestionRepository questionRepository, AnswerRepository answerRepository) {
         this.quizAttemptRepository = quizAttemptRepository;
+        this.quizSessionRepository = quizSessionRepository;
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
     }
 
-    public void saveQuizAttempt(Long userId, Long questionId, String selectedAnswer, boolean isCorrect,
+    public void saveQuizAttempt(QuizSession session, Long questionId, String selectedAnswer, boolean isCorrect,
                                 LocalDateTime startTime, LocalDateTime endTime) {
         String sql = """
             INSERT INTO quiz_attempts 
-            (user_id, question_id, selected_answer, is_correct, start_time, end_time, created_at) 
-            VALUES (:userId, :questionId, :selectedAnswer, :isCorrect, :startTime, :endTime, NOW())
+            (session_id, question_id, selected_answer, is_correct, start_time, end_time, created_at) 
+            VALUES (:sessionId, :questionId, :selectedAnswer, :isCorrect, :startTime, :endTime, NOW())
         """;
 
         entityManager.createNativeQuery(sql)
-                .setParameter("userId", userId)
+                .setParameter("sessionId", session.getSessionId())
                 .setParameter("questionId", questionId)
                 .setParameter("selectedAnswer", selectedAnswer)
                 .setParameter("isCorrect", isCorrect)
                 .setParameter("startTime", startTime)
                 .setParameter("endTime", endTime)
                 .executeUpdate();
-
-
     }
 
-
-    public List<QuizAttempt> getUserAttempts(Long userId) {
-        return quizAttemptRepository.findByUserId(userId);
+    public List<QuizAttempt> getAttemptsBySession(QuizSession session) {
+        return quizAttemptRepository.findBySessionId(session);
     }
-
 
     public QuizAttempt evaluateQuizAttempt(QuizAttemptDTO dto) {
         Optional<Question> existingQuestion = questionRepository.findById(dto.getQuestionId());
@@ -72,18 +71,26 @@ public class QuizAttemptService {
                 isCorrect = true;
             }
         }
-        QuizAttempt isAlreadyPresent = quizAttemptRepository.findByUserIdAndStartTime(dto.getUserId(), dto.getStartTime());
-        if (isAlreadyPresent != null){
+
+        // Fetch the active session for the user
+        QuizSession session = quizSessionRepository.findBySessionIdAndStatus(dto.getSessionId(), QuizSession.SessionStatus.IN_PROGRESS);
+        if (session == null) {
+            throw new IllegalStateException("No active quiz session found for session ID: " + dto.getSessionId());
+        }
+
+        // Check if the attempt already exists
+        QuizAttempt isAlreadyPresent = quizAttemptRepository.findBySessionIdAndStartTime(session, dto.getStartTime());
+        if (isAlreadyPresent != null) {
             return isAlreadyPresent;
         }
-        // 🔥 Fixed: `answer` is now a boolean instead of a string
-        saveQuizAttempt(dto.getUserId(), dto.getQuestionId(), dto.getSelectedAnswer(), isCorrect, dto.getStartTime(), dto.getEndTime());
-        return quizAttemptRepository.findByUserIdAndStartTime(dto.getUserId(), dto.getStartTime());
+
+        // Save the attempt
+        saveQuizAttempt(session, dto.getQuestionId(), dto.getSelectedAnswer(), isCorrect, dto.getStartTime(), dto.getEndTime());
+        return quizAttemptRepository.findBySessionIdAndStartTime(session, dto.getStartTime());
     }
 
-
-    public List<QuizAttempt> getUserAttemptByTime(Long userId, LocalDateTime startTime, LocalDateTime endTime) {
-        return quizAttemptRepository.findByUserIdAndStartTimeBetween(userId, startTime, endTime);
+    public List<QuizAttempt> getAttemptsBySessionAndTime(QuizSession session, LocalDateTime startTime, LocalDateTime endTime) {
+        return quizAttemptRepository.findBySessionIdAndStartTimeBetween(session, startTime, endTime);
     }
 
     public List<QuizAttempt> getAttemptsByQuestionId(Long questionId) {
