@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "quiz_sessions")
 @Getter
 @Setter
 @NoArgsConstructor

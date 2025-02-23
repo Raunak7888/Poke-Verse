@@ -52,7 +52,7 @@ public class PartitionService {
                 end_time TIMESTAMP,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (session_id, id),
-                CONSTRAINT fk_quiz_session FOREIGN KEY (session_id) REFERENCES quiz_session (session_id)
+                CONSTRAINT fk_quiz_sessions FOREIGN KEY (session_id) REFERENCES quiz_sessions (session_id)
             ) PARTITION BY HASH (session_id);
             """;
 

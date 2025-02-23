@@ -24,6 +24,11 @@ public class LeaderBoard {
 
     private Long score;
 
-    @CreationTimestamp
+    private int totalQuestions;
+
+    private int correctAnswers;
+
+
+
     private LocalDateTime created_at;
 }

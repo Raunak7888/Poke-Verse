@@ -50,4 +50,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     Optional<Question> findByQuestion(String question);
 
     List<Question> findByQuizType(String quizType);
+
+    Optional<Question> findById(Long id);
 }
