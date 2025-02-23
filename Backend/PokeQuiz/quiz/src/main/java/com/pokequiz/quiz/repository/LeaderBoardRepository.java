@@ -8,8 +8,6 @@ import java.util.List;
 
 @Repository
 public interface LeaderBoardRepository extends JpaRepository<LeaderBoard, Long> {
-
-    // 🏆 Get top players sorted by score
     List<LeaderBoard> findTop10ByOrderByScoreDesc();
 }
 

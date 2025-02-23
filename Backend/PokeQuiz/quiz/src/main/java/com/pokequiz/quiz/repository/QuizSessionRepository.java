@@ -8,13 +8,6 @@ import java.util.List;
 
 @Repository
 public interface QuizSessionRepository extends JpaRepository<QuizSession, Long> {
-
-    List<QuizSession> findByUserId(String userId);
-
     QuizSession findByUserIdAndStatus(String userId, QuizSession.SessionStatus status);
-
-
     QuizSession findBySessionIdAndStatus(Long sessionId, QuizSession.SessionStatus status);
-
-
 }

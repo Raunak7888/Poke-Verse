@@ -42,14 +42,10 @@ public class Question {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
 
     public List<String> getOptionsList() {
         try {
-            return new ObjectMapper().readValue(options, new TypeReference<List<String>>() {});
+            return new ObjectMapper().readValue(options, new TypeReference<>() {});
         } catch (Exception e) {
             return new ArrayList<>();
         }
