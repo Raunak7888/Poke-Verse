@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,4 +54,8 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findByQuizType(String quizType);
 
     Optional<Question> findById(Long id);
+
+    @Query("SELECT q FROM Question q WHERE q.difficulty = :difficulty ORDER BY RANDOM() LIMIT :limit")
+    List<Question> findByDifficultyLimited(@Param("difficulty") String difficulty, @Param("limit") int limit);
+
 }

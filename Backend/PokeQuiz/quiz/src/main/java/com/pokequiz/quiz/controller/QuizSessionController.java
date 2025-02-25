@@ -22,10 +22,10 @@ public class QuizSessionController {
 
     // 🎯 Create a new Quiz Session
     @PostMapping("/create")
-    public ResponseEntity<QuizSession> createSession(@RequestBody QuizSessionDTO dto) {
+    public ResponseEntity<?> createSession(@RequestBody QuizSessionDTO dto) {
         if (dto.getUserId() == null || dto.getTotalQuestions() <= 0 ||
                 dto.getDifficulty() == null || dto.getRegion() == null || dto.getQuizType() == null) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body("Invalid request body");
         }
         QuizSession session = quizSessionService.createSession(dto);
         return ResponseEntity.ok(session);
@@ -33,7 +33,7 @@ public class QuizSessionController {
 
     // 🔄 Update Quiz Session (endTime and status)
     @PutMapping("/update/{sessionId}")
-    public ResponseEntity<QuizSession> updateSession(
+    public ResponseEntity<?> updateSession(
             @PathVariable Long sessionId,
             @RequestParam QuizSession.SessionStatus status) {
 

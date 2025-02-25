@@ -61,4 +61,9 @@ public class GameController {
             @RequestParam int limit) {
         return ResponseEntity.ok(gameService.getRandomQuizzesAsPerDifficultyAndRegion(region, difficulty, quizType, limit));
     }
+
+    @GetMapping("/gradually")
+    public ResponseEntity<?> graduallyIncreasingDifficulty(@RequestParam int limit)  {
+        return ResponseEntity.ok(gameService.graduallyIncreasingDifficulty(limit));
+    }
 }

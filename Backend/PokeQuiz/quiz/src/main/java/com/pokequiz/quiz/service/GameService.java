@@ -4,6 +4,7 @@ import com.pokequiz.quiz.model.Question;
 import com.pokequiz.quiz.repository.QuestionRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -42,4 +43,16 @@ public class GameService {
     public List<Question> getQuizzesByQuizType(String quizType) {
         return questionRepository.findByQuizType(quizType);
     }
+
+    public List<Question> graduallyIncreasingDifficulty(int limit) {
+        int eachOne = limit / 3;
+
+        List<Question> allQuizzes = new ArrayList<>();
+        allQuizzes.addAll(questionRepository.findByDifficultyLimited("easy", eachOne));
+        allQuizzes.addAll(questionRepository.findByDifficultyLimited("medium", eachOne));
+        allQuizzes.addAll(questionRepository.findByDifficultyLimited("hard", limit - (eachOne * 2)));
+
+        return allQuizzes;
+    }
+
 }

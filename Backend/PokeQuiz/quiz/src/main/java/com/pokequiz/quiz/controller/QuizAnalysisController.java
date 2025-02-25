@@ -10,27 +10,28 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/quiz-analysis")
+@CrossOrigin(origins = "http://127.0.0.1:5500")
 @RequiredArgsConstructor
 public class QuizAnalysisController {
 
     private final QuizAnalysisService quizAnalysisService;
 
     @PostMapping("/{sessionId}")
-    public ResponseEntity<QuizAnalysis> analyzeQuiz(@PathVariable Long sessionId) {
-        return ResponseEntity.ok(quizAnalysisService.analyzeQuiz(sessionId));
+    public ResponseEntity<?> analyzeQuiz(@PathVariable Long sessionId) {
+        QuizAnalysis analysis = quizAnalysisService.analyzeQuiz(sessionId);
+        return analysis != null ? ResponseEntity.ok(analysis) : ResponseEntity.badRequest().body("Failed to analyze quiz.");
     }
 
     @GetMapping("/{sessionId}")
-    public ResponseEntity<QuizAnalysis> getAnalysis(@PathVariable Long sessionId) {
+    public ResponseEntity<?> getAnalysis(@PathVariable Long sessionId) {
         return quizAnalysisService.getAnalysisBySessionId(sessionId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<QuizAnalysis>> getUserAnalyses(@PathVariable String userId) {
-        return ResponseEntity.ok(quizAnalysisService.getUserAnalyses(userId));
+    public ResponseEntity<?> getUserAnalyses(@PathVariable String userId) {
+        List<QuizAnalysis> analyses = quizAnalysisService.getUserAnalyses(userId);
+        return ResponseEntity.ok(analyses);
     }
-
-
 }

@@ -25,14 +25,14 @@ public class QuizAttemptController {
     }
 
     @PostMapping("/submit")
-    public ResponseEntity<QuizAttempt> submitQuizAttempt(@RequestBody QuizAttemptDTO dto) {
+    public ResponseEntity<?> submitQuizAttempt(@RequestBody QuizAttemptDTO dto) {
         if (dto.getSessionId() == null || dto.getQuestionId() == null || dto.getSelectedAnswer() == null ||
                 dto.getStartTime() == null || dto.getEndTime() == null) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body("Invalid request body");
         }
 
         if (dto.getStartTime().isAfter(dto.getEndTime())) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body("Invalid start and end time");
         }
 
         QuizAttempt result = quizAttemptService.evaluateQuizAttempt(dto);
@@ -49,15 +49,20 @@ public class QuizAttemptController {
     }
 
     @GetMapping("/session/time")
-    public ResponseEntity<List<QuizAttempt>> getAttemptsBySessionAndTime(@RequestParam Long sessionId,
+    public ResponseEntity<?> getAttemptsBySessionAndTime(@RequestParam Long sessionId,
                                                                          @RequestParam LocalDateTime startTime,
                                                                          @RequestParam LocalDateTime endTime) {
         if (startTime.isAfter(endTime)) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body("Invalid start and end time");
+        }
+        QuizSession session;
+        try {
+            session = quizSessionRepository.findById(sessionId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid session ID: " + sessionId));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Invalid session ID: " + sessionId);
         }
 
-        QuizSession session = quizSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid session ID: " + sessionId));
 
         List<QuizAttempt> attempts = quizAttemptService.getAttemptsBySessionAndTime(session, startTime, endTime);
         return ResponseEntity.ok(attempts);
