@@ -1,16 +1,18 @@
 package com.pokequiz.quiz.dto;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
-public class PlayerDTO {
+import java.time.LocalDateTime;
 
-    @NotNull(message = "userId is required")
-    private Long userId;
-
-    @NotNull(message = "username is required")
-    private String username;
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class PlayerDto {
+    private String userId;
+    private String name;
+    private int score;
+    private Long roomId;
+    private LocalDateTime createdAt;
 }
