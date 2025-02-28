@@ -58,4 +58,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     @Query("SELECT q FROM Question q WHERE q.difficulty = :difficulty ORDER BY RANDOM() LIMIT :limit")
     List<Question> findByDifficultyLimited(@Param("difficulty") String difficulty, @Param("limit") int limit);
 
+    @Query(value = "SELECT * FROM questions ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+    Question findRandomQuestion();
+
 }
