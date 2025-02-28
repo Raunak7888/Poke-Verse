@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PlayerDto {
-    private String userId;
+public class PlayerDTO {
+    private Long userId;
     private String name;
     private int score;
     private Long roomId;
