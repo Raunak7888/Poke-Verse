@@ -39,7 +39,7 @@ public class QuizRoomService {
         room.setHostId(playerDto.getUserId());
 
         // Create host player and associate with room
-        Player player = new Player(playerDto.getUserId(), playerDto.getUsername(), room);
+        Player player = new Player(playerDto.getUserId(), playerDto.getName(), room);
         room.addPlayer(player);
 
         quizRoomRepository.save(room);

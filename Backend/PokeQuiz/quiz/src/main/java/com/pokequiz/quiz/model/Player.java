@@ -22,7 +22,7 @@ public class Player {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String userId;
+    private Long userId;
 
     @Column(nullable = false)
     private String name;
@@ -36,4 +36,10 @@ public class Player {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    public Player(Long userId, String name, Room room) {
+        this.userId = userId;
+        this.name = name;
+        this.room = room;
+    }
 }

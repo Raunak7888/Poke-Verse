@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Entity
@@ -34,4 +35,9 @@ public class RoomQuiz {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    public RoomQuiz(Question question, Room room) {
+        this.quizId = question;
+        this.roomId = room;
+    }
 }
