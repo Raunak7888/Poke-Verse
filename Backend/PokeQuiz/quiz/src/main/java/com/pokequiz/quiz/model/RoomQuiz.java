@@ -1,6 +1,5 @@
 package com.pokequiz.quiz.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,30 +8,29 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(name = "players")
+@Table(name = "room_quizzes")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Player {
+public class RoomQuiz {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String userId;
-
-    @Column(nullable = false)
-    private String name;
-
-    private int score;
+    @ManyToOne
+    @JoinColumn(name = "quiz_id", nullable = false)
+    private Question quizId;
 
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
-    @JsonIgnore
-    private Room room;
+    private Room roomId;
+
+    @OneToMany(mappedBy = "quizId", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlayerAnswer> answers;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

@@ -55,4 +55,7 @@ public class GameService {
         return allQuizzes;
     }
 
+    public Question getRandomQuiz() {
+        return questionRepository.findRandomQuestion();
+    }
 }
